@@ -82,11 +82,56 @@ exports.register = async (req, res) => {
 };
 
 /**
- * @description Register New User
+ * @description Verify User
  *
- * @method  POST
- * @url api/auth/register
+ * @method GET
+ * @url api/auth/verify/:token
  *
  * @access  public
  *
  */
+exports.verify = async (req, res) => {
+  // Token From Params
+  const { token } = req.params;
+
+  try {
+    let verifyData = await Verification.findOne({
+      token,
+      type: "Register New Account",
+    });
+
+    if (!verifyData) {
+      return res
+        .status(400)
+        .json(error("Verification data not found", res.statusCode));
+    }
+
+    let userData = await User.findOne({ _id: verifyData.userId }).select(
+      "-password"
+    );
+
+    userData = await User.findByIdAndUpdate(userData._id, {
+      $set: {
+        verified: true,
+        verifiedAt: new Date(),
+      },
+    });
+
+    // Remove verification data after succes verify
+    verifyData = await Verification.findOneAndRemove(verifyData._id);
+
+    // Response
+    res
+      .status(200)
+      .json(
+        success(
+          "Your successfully verificating your account",
+          null,
+          res.statusCode
+        )
+      );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(error("Internal Server Error", res.statusCode));
+  }
+};
