@@ -1,4 +1,5 @@
 const argon2 = require("argon2");
+const config = require("config");
 const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 
@@ -149,5 +150,56 @@ exports.login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json(validation(errors.array()));
+  }
+
+  const { email, password } = req.body;
+
+  try {
+    // Find user data
+    const userData = await User.findOne({ email });
+
+    // If user with body email not found throw error
+    if (!userData)
+      return res.status(422).json(validation("Invalid Email or Password"));
+
+    // Check & validate user password
+    const checkPassword = await argon2.verify(userData.password, password);
+
+    // If password incorrect
+    if (!checkPassword)
+      return res.status(422).json(validation("Invalid Email or Password"));
+
+    // Check user verified or not
+    if (userData && !userData.verified)
+      return res
+        .status(400)
+        .json(
+          error("Please verify your account before log in", res.statusCode)
+        );
+
+    // Execute if validation above pass
+    const response = {
+      user: {
+        id: userData._id,
+        fullName: userData.fullName,
+        email: userData.email,
+      },
+    };
+
+    jwt.sign(
+      response,
+      config.get("jwtSecret"),
+      { expiresIn: 3600 },
+      (err, token) => {
+        if (err) throw err;
+
+        res
+          .status(200)
+          .json(success("Login Success", { token }, res.statusCode));
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(error("Internal Server Error", res.statusCode));
   }
 };
