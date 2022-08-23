@@ -6,3 +6,9 @@ exports.registerValidation = [
   check("email", "Please enter valid email").isEmail(),
   check("password", "Password is required").not().isEmpty(),
 ];
+
+exports.loginValidation = [
+  check("email", "Email is required").notEmpty(),
+  check("email", "Please enter valid email").isEmail(),
+  check("password", "Password is required").notEmpty(),
+];
