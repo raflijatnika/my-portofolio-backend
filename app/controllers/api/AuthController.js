@@ -135,3 +135,19 @@ exports.verify = async (req, res) => {
     res.status(500).json(error("Internal Server Error", res.statusCode));
   }
 };
+
+/**
+ * @description Login User
+ *
+ * @method POST
+ * @url api/auth/login
+ *
+ * @access  public
+ *
+ */
+exports.login = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(validation(errors.array()));
+  }
+};
