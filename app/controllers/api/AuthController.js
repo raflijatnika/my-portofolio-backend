@@ -78,6 +78,7 @@ exports.register = async (req, res) => {
       )
     );
   } catch (err) {
+    console.error(err.message);
     res.status(500).json(error("Internal Server Error", res.statusCode));
   }
 };
@@ -132,7 +133,7 @@ exports.verify = async (req, res) => {
         )
       );
   } catch (err) {
-    console.error(err);
+    console.error(err.message);
     res.status(500).json(error("Internal Server Error", res.statusCode));
   }
 };
@@ -199,7 +200,69 @@ exports.login = async (req, res) => {
       }
     );
   } catch (err) {
-    console.error(err);
+    console.error(err.message);
+    res.status(500).json(error("Internal Server Error", res.statusCode));
+  }
+};
+
+/**
+ * @description Resend Verification User
+ *
+ * @method POST
+ * @url api/auth/verify/resend
+ *
+ * @access  public
+ *
+ */
+exports.resendVerification = async (req, res) => {
+  // Request Body
+  const { email } = req.body;
+
+  // Validation For Email
+  if (!email)
+    return res.status(422).json(validation({ message: "Email is required" }));
+
+  try {
+    // Find user data by email
+    const userData = await User.findOne({ email: email.toLowerCase() });
+
+    // If user not found
+    if (!userData)
+      return res.status(404).json(error("Email not found", res.statusCode));
+
+    // Find user by userId
+    let verification = await Verification.findOne({
+      userId: userData._id,
+      type: "Register new aaccount",
+    });
+
+    // If verification data found
+    if (verification) {
+      verification = await Verification.findByIdAndRemove(verification._id);
+    }
+
+    // Create a new verification data
+    let newVerification = new Verification({
+      token: randomString(200),
+      userId: userData._id,
+      type: "Register New Account",
+    });
+
+    // Save new verification data
+    await newVerification.save();
+
+    // Send response
+    res
+      .status(201)
+      .json(
+        success(
+          "Verification has been sent",
+          { verification: newVerification },
+          res.statusCode
+        )
+      );
+  } catch (err) {
+    console.error(err.message);
     res.status(500).json(error("Internal Server Error", res.statusCode));
   }
 };
