@@ -10,6 +10,8 @@ specifiers:
   jsonwebtoken: ^8.5.1
   mongoose: ^6.5.2
   nodemon: ^2.0.19
+  swagger-autogen: ^2.21.5
+  swagger-ui-express: ^4.5.0
 
 dependencies:
   argon2: 0.29.0
@@ -20,6 +22,8 @@ dependencies:
   express-validator: 6.14.2
   jsonwebtoken: 8.5.1
   mongoose: 6.5.2
+  swagger-autogen: 2.21.5
+  swagger-ui-express: 4.5.0_express@4.18.1
 
 devDependencies:
   nodemon: 2.0.19
@@ -73,6 +77,12 @@ packages:
     dependencies:
       mime-types: 2.1.35
       negotiator: 0.6.3
+    dev: false
+
+  /acorn/7.4.1:
+    resolution: {integrity: sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
     dev: false
 
   /agent-base/6.0.2:
@@ -298,6 +308,11 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.2
+    dev: false
+
+  /deepmerge/4.2.2:
+    resolution: {integrity: sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==}
+    engines: {node: '>=0.10.0'}
     dev: false
 
   /delegates/1.0.0:
@@ -1142,6 +1157,29 @@ packages:
     dependencies:
       has-flag: 3.0.0
     dev: true
+
+  /swagger-autogen/2.21.5:
+    resolution: {integrity: sha512-HEpOfxV2R1VoEkwRhTMGNa2PAVt8wnCjMDTiZmAQ1MRDUejKljWh2CxwPfwzdRF9n8fdjUUJS77G/hT1de6e7w==}
+    dependencies:
+      acorn: 7.4.1
+      deepmerge: 4.2.2
+      glob: 7.2.3
+      json5: 2.2.1
+    dev: false
+
+  /swagger-ui-dist/4.14.0:
+    resolution: {integrity: sha512-TBzhheU15s+o54Cgk9qxuYcZMiqSm/SkvKnapoGHOF66kz0Y5aGjpzj5BT/vpBbn6rTPJ9tUYXQxuDWfsjiGMw==}
+    dev: false
+
+  /swagger-ui-express/4.5.0_express@4.18.1:
+    resolution: {integrity: sha512-DHk3zFvsxrkcnurGvQlAcLuTDacAVN1JHKDgcba/gr2NFRE4HGwP1YeHIXMiGznkWR4AeS7X5vEblNn4QljuNA==}
+    engines: {node: '>= v0.10.32'}
+    peerDependencies:
+      express: '>=4.0.0'
+    dependencies:
+      express: 4.18.1
+      swagger-ui-dist: 4.14.0
+    dev: false
 
   /tar/6.1.11:
     resolution: {integrity: sha512-an/KZQzQUkZCkuoAA64hM92X0Urb6VpRhAFllDzz44U2mcD5scmT3zBc4VgVpkugF580+DQn8eAFSyoQt0tznA==}
