@@ -18,6 +18,10 @@ const { success, error, validation } = require("../../helpers/responseApi");
  *
  */
 exports.register = async (req, res) => {
+  /*  
+    #swagger.tags = ['Authentication']
+    #swagger.description = 'Endpoint to register new user / account' 
+  */
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(422).json(validation(errors.array()));
@@ -93,6 +97,11 @@ exports.register = async (req, res) => {
  *
  */
 exports.verify = async (req, res) => {
+  /*  
+    #swagger.tags = ['Authentication']
+    #swagger.description = 'Endpoint to verify new user / account' 
+  */
+
   // Token From Params
   const { token } = req.params;
 
@@ -148,6 +157,11 @@ exports.verify = async (req, res) => {
  *
  */
 exports.login = async (req, res) => {
+  /*  
+    #swagger.tags = ['Authentication']
+    #swagger.description = 'Endpoint to login user / account' 
+  */
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json(validation(errors.array()));
@@ -215,6 +229,11 @@ exports.login = async (req, res) => {
  *
  */
 exports.resendVerification = async (req, res) => {
+  /*  
+    #swagger.tags = ['Authentication']
+    #swagger.description = 'Endpoint to resend verification for new user / account' 
+  */
+
   // Request Body
   const { email } = req.body;
 
@@ -264,5 +283,38 @@ exports.resendVerification = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json(error("Internal Server Error", res.statusCode));
+  }
+};
+
+/**
+ * @description Get Autenticated User
+ *
+ * @method GET
+ * @url api/auth/user
+ *
+ * @access private (User have to logged in)
+ *
+ */
+exports.getAuthenticatedUser = async (req, res) => {
+  /*  
+    #swagger.tags = ['Authentication']
+    #swagger.description = 'Endpoint to get authenticated user' 
+  */
+
+  try {
+    // Find data of logged user
+    const userData = await User.findById(req.user.id).select("-password");
+
+    // Check that user found or not
+    if (!userData)
+      return res.status(400).json(error("User Not Found", res.statusCode));
+
+    // If user found send response
+    return res
+      .status(200)
+      .json(success(`Hello ${userData.name}`, { userData }, res.statusCode));
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json(error("Internal Server Error", res.statusCode));
   }
 };
